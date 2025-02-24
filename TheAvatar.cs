@@ -291,7 +291,11 @@ public class TheAvatar : MonoBehaviour
         // create last motion AnimationClip
         //
         ChordLength(motions[Motion]);
-        CurveFitting(motions[Motion]);
+        CurveFitting(motions[Motion], false, true);
+        for (int i = 0; i < 4; i++) {
+            controlpoint[i].transform.position = motions[Motion].ControlPoints[i];
+            //controlpoint[i] = Instantiate(controlpoint[i]);
+        }
         AnimationClip Animation = BvhAnimation.CreateAnimationClip(motions[Motion], scaling);
         Animation.name = thisavatar.name;
         Animation.legacy = true;
@@ -303,129 +307,132 @@ public class TheAvatar : MonoBehaviour
         var humanPoseTransfer = thisavatar.AddComponent<HumanPoseTransfer>();
         humanPoseTransfer.Avatar = avatar;
     }
-    public void DoMotion1()
-    {
-        //
-        // create AnimationClip
-        //
-        int blendTime = 40;
-        ChannelCurve[] oldM = motions[0].Channels;
-        int f = GetCurrentFrame(1, thisavatar.transform.GetChild(0).gameObject.transform.position);
-        int simF = FindSimFrame(f, motions[1], motions[0], blendTime);
-        Vector3 origin = new Vector3(motions[0].Channels[0].Keys[0], motions[0].Channels[1].Keys[0], motions[0].Channels[2].Keys[0]);
+
+    // Deparcted
+    //public void DoMotion1()
+    //{
+    //    //
+    //    // create AnimationClip
+    //    //
+    //    int blendTime = 40;
+    //    ChannelCurve[] oldM = motions[0].Channels;
+    //    int f = GetCurrentFrame(1, thisavatar.transform.GetChild(0).gameObject.transform.position);
+    //    int simF = FindSimFrame(f, motions[1], motions[0], blendTime);
+    //    Vector3 origin = new Vector3(motions[0].Channels[0].Keys[0], motions[0].Channels[1].Keys[0], motions[0].Channels[2].Keys[0]);
         
 
-        for (int i = 0; i < blendTime; i++)
-        {
-            for(int j = 3; j < motions[0].Channels.Length; j++)
-            {
-                motions[0].Channels[j].SetKey(i, motions[0].Channels[j].Keys[simF] * i / blendTime + motions[1].Channels[j].Keys[f] * (blendTime - i)/ blendTime);
-            }
-        }
-        for (int i = 0; i < motions[0].FrameCount; i++)
-        {
-            //Vector3 off = new Vector3(0, 0, 0);
-            //if (i + simF >= motions[0].FrameCount)
-            //    off = origin;
-            //else
-            //{
-            //    off = new Vector3(-oldM[0].Keys[0] + oldM[0].Keys[motions[0].FrameCount - 1],
-            //        -oldM[1].Keys[0] + oldM[1].Keys[motions[0].FrameCount - 1],
-            //        -oldM[2].Keys[0] + oldM[2].Keys[motions[0].FrameCount - 1]);
-            //}
-            motions[0].Channels[0].SetKey(i, thisavatar.transform.GetChild(0).gameObject.transform.position.x - origin.x + motions[0].Channels[0].Keys[i]);
-            motions[0].Channels[1].SetKey(i, thisavatar.transform.GetChild(0).gameObject.transform.position.y - origin.y + motions[0].Channels[1].Keys[i]);
-            motions[0].Channels[2].SetKey(i, thisavatar.transform.GetChild(0).gameObject.transform.position.z - origin.z + motions[0].Channels[2].Keys[i]);
-        }
+    //    for (int i = 0; i < blendTime; i++)
+    //    {
+    //        for(int j = 3; j < motions[0].Channels.Length; j++)
+    //        {
+    //            motions[0].Channels[j].SetKey(i, motions[0].Channels[j].Keys[simF] * i / blendTime + motions[1].Channels[j].Keys[f] * (blendTime - i)/ blendTime);
+    //        }
+    //    }
+    //    for (int i = 0; i < motions[0].FrameCount; i++)
+    //    {
+    //        //Vector3 off = new Vector3(0, 0, 0);
+    //        //if (i + simF >= motions[0].FrameCount)
+    //        //    off = origin;
+    //        //else
+    //        //{
+    //        //    off = new Vector3(-oldM[0].Keys[0] + oldM[0].Keys[motions[0].FrameCount - 1],
+    //        //        -oldM[1].Keys[0] + oldM[1].Keys[motions[0].FrameCount - 1],
+    //        //        -oldM[2].Keys[0] + oldM[2].Keys[motions[0].FrameCount - 1]);
+    //        //}
+    //        motions[0].Channels[0].SetKey(i, thisavatar.transform.GetChild(0).gameObject.transform.position.x - origin.x + motions[0].Channels[0].Keys[i]);
+    //        motions[0].Channels[1].SetKey(i, thisavatar.transform.GetChild(0).gameObject.transform.position.y - origin.y + motions[0].Channels[1].Keys[i]);
+    //        motions[0].Channels[2].SetKey(i, thisavatar.transform.GetChild(0).gameObject.transform.position.z - origin.z + motions[0].Channels[2].Keys[i]);
+    //    }
 
-        CurveFitting(motions[0]);
-        ChangeControlPoint(motions[0]);
+    //    CurveFitting(motions[0], false, true);
+    //    ChangeControlPoint(motions[0]);
 
-        AnimationClip Animation = BvhAnimation.CreateAnimationClip(motions[0], scaling);
-        Animation.name = thisavatar.name;
-        Animation.legacy = true;
-        Animation.wrapMode = WrapMode.Loop;
-        //var animation = null;
-        //Destroy(thisavatar.GetComponent<Animation>());
-        //animation = thisavatar.AddComponent<Animation>();
-        animation.AddClip(Animation, Animation.name);
-        animation.clip = Animation;
-        animation.Play();
-        //Destroy(thisavatar.GetComponent<HumanPoseTransfer>());
-        var humanPoseTransfer = thisavatar.AddComponent<HumanPoseTransfer>();
-        humanPoseTransfer.Avatar = avatar;
-    }
+    //    AnimationClip Animation = BvhAnimation.CreateAnimationClip(motions[0], scaling);
+    //    Animation.name = thisavatar.name;
+    //    Animation.legacy = true;
+    //    Animation.wrapMode = WrapMode.Loop;
+    //    //var animation = null;
+    //    //Destroy(thisavatar.GetComponent<Animation>());
+    //    //animation = thisavatar.AddComponent<Animation>();
+    //    animation.AddClip(Animation, Animation.name);
+    //    animation.clip = Animation;
+    //    animation.Play();
+    //    //Destroy(thisavatar.GetComponent<HumanPoseTransfer>());
+    //    var humanPoseTransfer = thisavatar.AddComponent<HumanPoseTransfer>();
+    //    humanPoseTransfer.Avatar = avatar;
+    //}
 
-    public void DoMotion2()
-    {
-        //
-        // create AnimationClip
-        //
-        int blendTime = 10;
-        int f = GetCurrentFrame(0, thisavatar.transform.GetChild(0).gameObject.transform.position);
-        int simFrame = FindSimFrame(f, motions[0], motions[1], blendTime);
-        Vector3 origin = new Vector3(motions[1].Channels[0].Keys[0], motions[1].Channels[1].Keys[0], motions[1].Channels[2].Keys[0]);
+    // Deparcted
+    //public void DoMotion2()
+    //{
+    //    //
+    //    // create AnimationClip
+    //    //
+    //    int blendTime = 10;
+    //    int f = GetCurrentFrame(0, thisavatar.transform.GetChild(0).gameObject.transform.position);
+    //    int simFrame = FindSimFrame(f, motions[0], motions[1], blendTime);
+    //    Vector3 origin = new Vector3(motions[1].Channels[0].Keys[0], motions[1].Channels[1].Keys[0], motions[1].Channels[2].Keys[0]);
 
-        Bvh temp_bvh = motions[1].DeepCopyAnimation();
-        for (int i = 0; i < blendTime; i++)
-        {
-            for (int j = 3; j < motions[1].Channels.Length; j++)
-            {
-                temp_bvh.Channels[j].SetKey(i, motions[1].Channels[j].Keys[simFrame] * i / blendTime + motions[0].Channels[j].Keys[f] * (blendTime - i) / blendTime);
-                //motions[1].Channels[j].SetKey(i, motions[1].Channels[j].Keys[simFrame] * i / blendTime + motions[0].Channels[j].Keys[f] * (blendTime - i) / blendTime);
-            }
-        }
-        for (int i = 0; i < motions[1].FrameCount - simFrame; i++) {
-            for (int j = 3; j < motions[1].Channels.Length; j++) {
-                temp_bvh.Channels[j].SetKey(blendTime + i, motions[1].Channels[j].Keys[simFrame+i]);
-            }
-        }
+    //    Bvh temp_bvh = motions[1].DeepCopyAnimation();
+    //    for (int i = 0; i < blendTime; i++)
+    //    {
+    //        for (int j = 3; j < motions[1].Channels.Length; j++)
+    //        {
+    //            temp_bvh.Channels[j].SetKey(i, motions[1].Channels[j].Keys[simFrame] * i / blendTime + motions[0].Channels[j].Keys[f] * (blendTime - i) / blendTime);
+    //            //motions[1].Channels[j].SetKey(i, motions[1].Channels[j].Keys[simFrame] * i / blendTime + motions[0].Channels[j].Keys[f] * (blendTime - i) / blendTime);
+    //        }
+    //    }
+    //    for (int i = 0; i < motions[1].FrameCount - simFrame; i++) {
+    //        for (int j = 3; j < motions[1].Channels.Length; j++) {
+    //            temp_bvh.Channels[j].SetKey(blendTime + i, motions[1].Channels[j].Keys[simFrame+i]);
+    //        }
+    //    }
 
-        //not finished
-        temp_bvh.m_frames = motions[1].FrameCount - simFrame + blendTime;
+    //    //not finished
+    //    temp_bvh.m_frames = motions[1].FrameCount - simFrame + blendTime;
 
-        for (int i = 0; i < temp_bvh.FrameCount; i++)
-        {
-            //Vector3 off = new Vector3(0, 0, 0);
-            //if (i + simF >= motions[1].FrameCount)
-            //    off = origin;
-            //else
-            //{
-            //    off = new Vector3(-oldM[0].Keys[0] + oldM[0].Keys[motions[1].FrameCount - 1],
-            //        -oldM[1].Keys[0] + oldM[1].Keys[motions[1].FrameCount - 1],
-            //        -oldM[2].Keys[0] + oldM[2].Keys[motions[1].FrameCount - 1]);
-            //}
-            temp_bvh.Channels[0].SetKey(i, thisavatar.transform.GetChild(0).gameObject.transform.position.x - origin.x + motions[1].Channels[0].Keys[simFrame-blendTime+i]);
-            temp_bvh.Channels[1].SetKey(i, thisavatar.transform.GetChild(0).gameObject.transform.position.y - origin.y + motions[1].Channels[1].Keys[simFrame-blendTime+i]);
-            temp_bvh.Channels[2].SetKey(i, thisavatar.transform.GetChild(0).gameObject.transform.position.z - origin.z + motions[1].Channels[2].Keys[simFrame-blendTime+i]);
-        }
+    //    for (int i = 0; i < temp_bvh.FrameCount; i++)
+    //    {
+    //        //Vector3 off = new Vector3(0, 0, 0);
+    //        //if (i + simF >= motions[1].FrameCount)
+    //        //    off = origin;
+    //        //else
+    //        //{
+    //        //    off = new Vector3(-oldM[0].Keys[0] + oldM[0].Keys[motions[1].FrameCount - 1],
+    //        //        -oldM[1].Keys[0] + oldM[1].Keys[motions[1].FrameCount - 1],
+    //        //        -oldM[2].Keys[0] + oldM[2].Keys[motions[1].FrameCount - 1]);
+    //        //}
+    //        temp_bvh.Channels[0].SetKey(i, thisavatar.transform.GetChild(0).gameObject.transform.position.x - origin.x + motions[1].Channels[0].Keys[simFrame-blendTime+i]);
+    //        temp_bvh.Channels[1].SetKey(i, thisavatar.transform.GetChild(0).gameObject.transform.position.y - origin.y + motions[1].Channels[1].Keys[simFrame-blendTime+i]);
+    //        temp_bvh.Channels[2].SetKey(i, thisavatar.transform.GetChild(0).gameObject.transform.position.z - origin.z + motions[1].Channels[2].Keys[simFrame-blendTime+i]);
+    //    }
 
-        //CurveFitting(temp_bvh);
-        //ChangeControlPoint(temp_bvh);
+    //    //CurveFitting(temp_bvh);
+    //    //ChangeControlPoint(temp_bvh);
 
-        AnimationClip Animation = BvhAnimation.CreateAnimationClip(temp_bvh, scaling);
-        Animation.name = thisavatar.name;
-        Animation.legacy = true;
-        Animation.wrapMode = WrapMode.Loop;
+    //    AnimationClip Animation = BvhAnimation.CreateAnimationClip(temp_bvh, scaling);
+    //    Animation.name = thisavatar.name;
+    //    Animation.legacy = true;
+    //    Animation.wrapMode = WrapMode.Loop;
 
-        // Return to original motions[1] when mixture animation ends.
-        AnimationEvent evt;
-        evt = new AnimationEvent();
-        evt.time = temp_bvh.FrameCount / Animation.frameRate;
-        Motion = 1;
-        evt.functionName = "domotion";
-        Animation.AddEvent(evt);
+    //    // Return to original motions[1] when mixture animation ends.
+    //    AnimationEvent evt;
+    //    evt = new AnimationEvent();
+    //    evt.time = temp_bvh.FrameCount / Animation.frameRate;
+    //    Motion = 1;
+    //    evt.functionName = "domotion";
+    //    Animation.AddEvent(evt);
 
-        //var animation = null;
-        //Destroy(thisavatar.GetComponent<Animation>());
-        //animation = thisavatar.AddComponent<Animation>();
-        animation.AddClip(Animation, Animation.name);
-        animation.clip = Animation;
-        animation.Play();
-        Destroy(thisavatar.GetComponent<HumanPoseTransfer>());
-        var humanPoseTransfer = thisavatar.AddComponent<HumanPoseTransfer>();
-        humanPoseTransfer.Avatar = avatar;
-    }
+    //    //var animation = null;
+    //    //Destroy(thisavatar.GetComponent<Animation>());
+    //    //animation = thisavatar.AddComponent<Animation>();
+    //    animation.AddClip(Animation, Animation.name);
+    //    animation.clip = Animation;
+    //    animation.Play();
+    //    Destroy(thisavatar.GetComponent<HumanPoseTransfer>());
+    //    var humanPoseTransfer = thisavatar.AddComponent<HumanPoseTransfer>();
+    //    humanPoseTransfer.Avatar = avatar;
+    //}
 
     public void Change_To_Motion(int index) {
         if (Motion == index)
@@ -476,7 +483,13 @@ public class TheAvatar : MonoBehaviour
         }
 
         ChordLength(temp_bvh);
-        CurveFitting(temp_bvh);
+        CurveFitting(temp_bvh, false, true);
+
+        for (int i = 0; i < 4; i++) {
+            controlpoint[i].transform.position = temp_bvh.ControlPoints[i];
+            //controlpoint[i] = Instantiate(controlpoint[i]);
+        }
+
         //ChangeControlPoint(temp_bvh);
 
         AnimationClip Animation = BvhAnimation.CreateAnimationClip(temp_bvh, scaling);
@@ -605,7 +618,7 @@ public class TheAvatar : MonoBehaviour
                 // chordal method
                 ChordLength(motions[Motion]);
                 // To calculate control points and curve
-                CurveFitting(motions[Motion]);
+                CurveFitting(motions[Motion], true, true);
                 motions[Motion].cLength = CurveLength(motions[Motion]);
                 motions[Motion].lPerFrame = motions[Motion].cLength / motions[Motion].FrameCount;
                 List<List<Single3>> newOffset = new List<List<Single3>>(newMotion.Count);
@@ -669,15 +682,15 @@ public class TheAvatar : MonoBehaviour
 
 
                 ChordLength(motions[Motion]);
-                CurveFitting(motions[Motion]);
+                CurveFitting(motions[Motion], true, false);
                 motions[Motion].cLength = CurveLength(motions[Motion]);
                 motions[Motion].lPerFrame = motions[Motion].cLength / motions[Motion].FrameCount;
                 List<List<Single3>> newOffset = new List<List<Single3>>(newMotion.Count);
-                for (int i = 0; i < 4; i++)
-                {
-                    controlpoint[i].transform.position = motions[Motion].ControlPoints[i];
-                    controlpoint[i] = Instantiate(controlpoint[i]);
-                }
+                //for (int i = 0; i < 4; i++)
+                //{
+                //    controlpoint[i].transform.position = motions[Motion].ControlPoints[i];
+                //    controlpoint[i] = Instantiate(controlpoint[i]);
+                //}
 
                 ChangeCurveFitting(motions[Motion]);
             }
@@ -959,7 +972,7 @@ public class TheAvatar : MonoBehaviour
         return Math.Sqrt(_x * _x + _y * _y);
     }
 
-    void CurveFitting(Bvh bvh)
+    void CurveFitting(Bvh bvh, bool first_time, bool redraw)
     {
         int frameCount = bvh.FrameCount;
         float[][] Q = MatrixCreate(frameCount, 3);
@@ -1042,24 +1055,26 @@ public class TheAvatar : MonoBehaviour
             bvh.ControlPoints[i].z = p[i][2];
         }
 
-        while (Points.Count != 0) {
-            GameObject step = Points[0];
-            Points.Remove(step);
-            Destroy(step);
-        }
+        if (redraw) {
+            while (Points.Count != 0) {
+                GameObject step = Points[0];
+                Points.Remove(step);
+                Destroy(step);
+            }
 
-        int frames_per_sphere = (int)(1 / bvh.FrameTime.TotalSeconds / 10);
-        for (int i = 0; i < frameCount; i += 60)
-        {
-            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            float t = bvh.Params[i];
-            Vector3 pos = new Vector3();
-            pos.x = B3_0(t) * bvh.ControlPoints[0].x + B3_1(t) * bvh.ControlPoints[1].x + B3_2(t) * bvh.ControlPoints[2].x + B3_3(t) * bvh.ControlPoints[3].x;
-            pos.y = B3_0(t) * bvh.ControlPoints[0].y + B3_1(t) * bvh.ControlPoints[1].y + B3_2(t) * bvh.ControlPoints[2].y + B3_3(t) * bvh.ControlPoints[3].y;
-            pos.z = B3_0(t) * bvh.ControlPoints[0].z + B3_1(t) * bvh.ControlPoints[1].z + B3_2(t) * bvh.ControlPoints[2].z + B3_3(t) * bvh.ControlPoints[3].z;
-            sphere.transform.position = pos;
-            sphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-            Points.Add(sphere);
+            int frames_per_sphere = (int)(1 / bvh.FrameTime.TotalSeconds / 10);
+            frames_per_sphere = first_time ? 60 : 1;
+            for (int i = 0; i < frameCount; i += frames_per_sphere) {
+                GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                float t = bvh.Params[i];
+                Vector3 pos = new Vector3();
+                pos.x = B3_0(t) * bvh.ControlPoints[0].x + B3_1(t) * bvh.ControlPoints[1].x + B3_2(t) * bvh.ControlPoints[2].x + B3_3(t) * bvh.ControlPoints[3].x;
+                pos.y = B3_0(t) * bvh.ControlPoints[0].y + B3_1(t) * bvh.ControlPoints[1].y + B3_2(t) * bvh.ControlPoints[2].y + B3_3(t) * bvh.ControlPoints[3].y;
+                pos.z = B3_0(t) * bvh.ControlPoints[0].z + B3_1(t) * bvh.ControlPoints[1].z + B3_2(t) * bvh.ControlPoints[2].z + B3_3(t) * bvh.ControlPoints[3].z;
+                sphere.transform.position = pos;
+                sphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                Points.Add(sphere);
+            }
         }
         return;
     }
